@@ -12,5 +12,10 @@ namespace Incremental.Common.Events
         /// Id of the new user account.
         /// </summary>
         public Guid Id { get; set; }
+        
+        /// <summary>
+        /// Username of the new user account.
+        /// </summary>
+        public string Username { get; set; }
     }
 }
