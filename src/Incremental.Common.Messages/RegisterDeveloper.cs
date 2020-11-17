@@ -10,6 +10,11 @@ namespace Incremental.Common.Messages
     public class RegisterDeveloper : IMessage
     {
         /// <summary>
+        /// Id of the developer.
+        /// </summary>
+        public Guid DeveloperId { get; set; }
+        
+        /// <summary>
         /// Name of the developer.
         /// </summary>
         public string Name { get; init; }

@@ -10,6 +10,11 @@ namespace Incremental.Common.Messages
     public class RegisterGame : IMessage
     {
         /// <summary>
+        /// Id of the game.
+        /// </summary>
+        public Guid GameId { get; init; }
+    
+        /// <summary>
         /// Title of the game.
         /// </summary>
         public string Title { get; init; }
