@@ -1,2 +1,2 @@
-# package.events
-Common external events for incremental.space
+# package.messages
+Common messages for incremental
