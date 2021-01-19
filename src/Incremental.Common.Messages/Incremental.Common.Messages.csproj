@@ -19,6 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Incremental.Common.Queue" Version="1.0.0" />
+        <PackageReference Include="Incremental.Common.Queue" Version="1.1.1" />
     </ItemGroup>
 </Project>
