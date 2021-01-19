@@ -3,22 +3,18 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <GenerateDocumentationFile>True</GenerateDocumentationFile>
-        <PackageVersion>0.3.1</PackageVersion>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageVersion>0.3.2</PackageVersion>
         <PackageId>Incremental.Common.Messages</PackageId>
         <Title>Common Queue Messages</Title>
         <Authors>Lucas Maximiliano Marino</Authors>
-        <PackageProjectUrl>https://github.com/incrementalspace/package.messages</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/incrementalspace/package.messages</RepositoryUrl>
-        <Copyright>Copyright © Lucas Maximiliano Marino 2020</Copyright>
-        <LangVersion>9</LangVersion>
+        <PackageProjectUrl>https://github.com/incrementalfun/package.messages</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/incrementalfun/package.messages</RepositoryUrl>
+        <Copyright>Copyright © Lucas Maximiliano Marino 2021</Copyright>
     </PropertyGroup>
-
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Incremental.Common.Queue" Version="1.1.1" />
     </ItemGroup>
+    
 </Project>
