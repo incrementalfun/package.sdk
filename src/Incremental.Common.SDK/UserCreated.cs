@@ -1,7 +1,7 @@
 ﻿using System;
 using Incremental.Common.Queue.Message.Contract;
 
-namespace Incremental.Common.Messages
+namespace Incremental.Common.SDK
 {
     /// <summary>
     /// Message representing a new user account.

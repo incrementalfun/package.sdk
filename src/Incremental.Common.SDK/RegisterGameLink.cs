@@ -1,12 +1,12 @@
 ﻿using System;
 using Incremental.Common.Queue.Message.Contract;
 
-namespace Incremental.Common.Messages
+namespace Incremental.Common.SDK
 {
     /// <summary>
-    /// Message for registering a tag for a game.
+    /// Message for registering a link for a game.
     /// </summary>
-    public class RegisterGameTag : IMessage
+    public class RegisterGameLink : IMessage
     {
         /// <summary>
         /// Id of the game.
@@ -14,15 +14,20 @@ namespace Incremental.Common.Messages
         public Guid GameId { get; init; }
         
         /// <summary>
-        /// Name of the tag.
+        /// Type of the link.
         /// </summary>
-        public string Tag { get; init; }
+        public string Type { get; init; }
+        
+        /// <summary>
+        /// Value of the link.
+        /// </summary>
+        public string Value { get; init; }
         
         /// <summary>
         /// Id of the profile responsible for the action.
         /// </summary>
         public Guid ProfileId { get; init; }
-        
+
         /// <inheritdoc />
         public (string queue, string id) Receipt { get; set; }
     }

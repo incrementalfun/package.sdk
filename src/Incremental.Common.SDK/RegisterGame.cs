@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Incremental.Common.Queue.Message.Contract;
 
-namespace Incremental.Common.Messages
+namespace Incremental.Common.SDK
 {
     /// <summary>
     /// Message for registering a new game.

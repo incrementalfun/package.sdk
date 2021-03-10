@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using Incremental.Common.Queue.Message.Contract;
 
-namespace Incremental.Common.Messages
+namespace Incremental.Common.SDK
 {
     /// <summary>
-    /// Message for registering a new developer.
+    /// Message for registering a link for a developer.
     /// </summary>
-    public class RegisterDeveloper : IMessage
+    public class RegisterDeveloperLink : IMessage
     {
         /// <summary>
         /// Id of the developer.
         /// </summary>
-        public Guid DeveloperId { get; set; }
+        public Guid DeveloperId { get; init; }
         
         /// <summary>
-        /// Name of the developer.
+        /// Type of the link.
         /// </summary>
-        public string Name { get; init; }
+        public string Type { get; init; }
         
         /// <summary>
-        /// Related links of the developer.
+        /// Value of the link.
         /// </summary>
-        public Dictionary<string, string> Links { get; init; }
+        public string Value { get; init; }
         
         /// <summary>
         /// Id of the profile responsible for the action.
