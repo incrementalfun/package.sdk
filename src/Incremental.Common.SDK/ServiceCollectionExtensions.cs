@@ -1,4 +1,5 @@
 ﻿using System;
+using Incremental.Common.SDK.Helpers;
 using MassTransit;
 using MassTransit.AmazonSqsTransport;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +25,7 @@ namespace Incremental.Common.SDK
                         host.AccessKey(configuration["AWS_ACCESS_KEY"]);
                         host.SecretKey(configuration["AWS_SECRET_KEY"]);
 
-                        host.Scope($"Incremental_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}");
+                        host.Scope(Topic.Scope());
                         host.EnableScopedTopics();
                     });
 
