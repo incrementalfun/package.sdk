@@ -14,11 +14,11 @@ namespace Incremental.Common.SDK
         /// Don't call this if you don't really know what you are doing.
         /// </summary>
         /// <returns><see cref="IServiceCollection"/></returns>
-        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, params Action<IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
+        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, params Action<IBusRegistrationContext, IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
         {
             services.AddMassTransit(configurator =>
             {
-                configurator.UsingAmazonSqs((_, cfg) =>
+                configurator.UsingAmazonSqs((ctx, cfg) => 
                 {
                     cfg.Host("eu-west-1", host =>
                     {
@@ -31,7 +31,7 @@ namespace Incremental.Common.SDK
 
                     foreach (var messageConfigurator in messageConfigurators)
                     {
-                        messageConfigurator.Invoke(cfg);
+                        messageConfigurator.Invoke(ctx, cfg);
                     }
                 });
             });
