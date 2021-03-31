@@ -2,19 +2,27 @@
 using Incremental.Common.SDK.Helpers;
 using MassTransit;
 using MassTransit.AmazonSqsTransport;
+using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Incremental.Common.SDK
 {
+    /// <summary>
+    /// Extensions to <see cref="IServiceCollection"/> to configure SDKs.
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Configures an SDK in an application. Meant to be used by individual SDKs.
         /// Don't call this if you don't really know what you are doing.
         /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="busConfiguration"></param>
+        /// <param name="messageConfigurators"></param>
         /// <returns><see cref="IServiceCollection"/></returns>
-        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, params Action<IBusRegistrationContext, IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
+        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration, params Action<IBusRegistrationContext, IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
         {
             services.AddMassTransit(configurator =>
             {
@@ -34,6 +42,8 @@ namespace Incremental.Common.SDK
                         messageConfigurator.Invoke(ctx, cfg);
                     }
                 });
+                
+                busConfiguration.Invoke(configurator);
             });
             
             return services;
