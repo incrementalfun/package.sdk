@@ -1,5 +1,6 @@
 ﻿using System;
 using Incremental.Common.SDK.Helpers;
+using Incremental.Common.SDK.Options;
 using MassTransit;
 using MassTransit.AmazonSqsTransport;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
@@ -47,6 +48,11 @@ namespace Incremental.Common.SDK
             });
             
             return services;
+        }
+
+        public static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
+        {
+            return services.Configure<TOptions>(configuration.GetSection(SdkOptions.Sdk).GetSection(section));
         }
     }
 }
