@@ -1,4 +1,5 @@
 ﻿using System;
+using Incremental.Common.Messaging;
 using Incremental.Common.SDK.Helpers;
 using Incremental.Common.SDK.Options;
 using MassTransit;
@@ -25,6 +26,8 @@ namespace Incremental.Common.SDK
         /// <returns><see cref="IServiceCollection"/></returns>
         public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration, params Action<IBusRegistrationContext, IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
         {
+            services.AddMessaging();
+
             services.AddMassTransit(configurator =>
             {
                 configurator.UsingAmazonSqs((ctx, cfg) => 

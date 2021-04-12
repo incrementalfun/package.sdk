@@ -2,6 +2,6 @@
 {
     public class SdkOptions
     {
-        public static string Sdk = "Sdk";
+        public static readonly string Sdk = "Sdk";
     }
 }
