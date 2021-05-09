@@ -11,7 +11,7 @@ namespace Incremental.Common.SDK.Helpers
 
         public static string Scope()
         {
-            return $"Incremental_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}";
+            return $"Incremental_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}";
         }
     }
 }
