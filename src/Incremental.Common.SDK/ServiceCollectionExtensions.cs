@@ -27,7 +27,7 @@ namespace Incremental.Common.SDK
 
             services.AddMassTransit(configurator =>
             {
-                configurator.SetSnakeCaseEndpointNameFormatter();
+                configurator.SetEndpointNameFormatter(IncrementalEndpointNameFormatter.Instance());
                 
                 configurator.UsingAmazonSqs((ctx, cfg) => 
                 {
