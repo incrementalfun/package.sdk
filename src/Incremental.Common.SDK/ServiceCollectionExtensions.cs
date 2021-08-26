@@ -49,6 +49,8 @@ namespace Incremental.Common.SDK
                 
                 busConfiguration.Invoke(configurator);
             });
+
+            services.AddGenericRequestClient();
             
             return services;
         }
