@@ -2,6 +2,9 @@
 {
     public class SdkOptions
     {
-        public static readonly string Sdk = "Sdk";
+        /// <summary>
+        ///     SDK Options key.
+        /// </summary>
+        public const string Sdk = "Sdk";
     }
 }

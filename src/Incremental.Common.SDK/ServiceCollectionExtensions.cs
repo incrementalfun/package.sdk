@@ -1,9 +1,7 @@
 ﻿using System;
 using Incremental.Common.Messaging;
-using Incremental.Common.SDK.Helpers;
 using Incremental.Common.SDK.Options;
 using MassTransit;
-using MassTransit.AmazonSqsTransport;
 using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +20,15 @@ namespace Incremental.Common.SDK
         /// <param name="services"></param>
         /// <param name="configuration"></param>
         /// <param name="busConfiguration"></param>
-        /// <param name="messageConfigurators"></param>
         /// <returns><see cref="IServiceCollection"/></returns>
-        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration, params Action<IBusRegistrationContext, IAmazonSqsBusFactoryConfigurator>[] messageConfigurators)
+        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration)
         {
             services.AddMessaging();
 
             services.AddMassTransit(configurator =>
             {
+                configurator.SetSnakeCaseEndpointNameFormatter();
+                
                 configurator.UsingAmazonSqs((ctx, cfg) => 
                 {
                     cfg.Host("eu-west-1", host =>
@@ -37,14 +36,11 @@ namespace Incremental.Common.SDK
                         host.AccessKey(configuration["AWS_ACCESS_KEY"]);
                         host.SecretKey(configuration["AWS_SECRET_KEY"]);
 
-                        host.Scope(Topic.Scope());
+                        host.Scope($"Incremental_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}");
                         host.EnableScopedTopics();
                     });
-
-                    foreach (var messageConfigurator in messageConfigurators)
-                    {
-                        messageConfigurator.Invoke(ctx, cfg);
-                    }
+                    
+                    cfg.ConfigureEndpoints(ctx);
                 });
                 
                 busConfiguration.Invoke(configurator);
@@ -55,6 +51,14 @@ namespace Incremental.Common.SDK
             return services;
         }
 
+        /// <summary>
+        ///     Helper method to configure SDK options.
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="section"></param>
+        /// <typeparam name="TOptions"></typeparam>
+        /// <returns></returns>
         public static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
         {
             return services.Configure<TOptions>(configuration.GetSection(SdkOptions.Sdk).GetSection(section));
