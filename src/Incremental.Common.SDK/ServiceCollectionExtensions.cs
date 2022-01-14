@@ -14,7 +14,7 @@ namespace Incremental.Common.SDK
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Configures an SDK in an application. Meant to be used by individual SDKs.
+        /// Configures an SDK in an application.
         /// Don't call this if you don't really know what you are doing.
         /// </summary>
         /// <param name="services"></param>
@@ -36,7 +36,11 @@ namespace Incremental.Common.SDK
                         host.AccessKey(configuration["AWS_ACCESS_KEY"]);
                         host.SecretKey(configuration["AWS_SECRET_KEY"]);
 
-                        host.Scope($"Incremental_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}");
+                        var scope = configuration["SDK_SCOPE"] != null 
+                            ? configuration["SDK_SCOPE"] 
+                            : "Incremental";
+                        
+                        host.Scope($"${scope}_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}");
                         host.EnableScopedTopics();
                     });
                     
