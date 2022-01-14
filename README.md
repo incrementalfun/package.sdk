@@ -1,6 +1,6 @@
-# Incremental.Common.Messaging
+# Incremental.Common.SDK
 
-Common resources for working with messages.
+Common resources for building internal SDKs.
 
 ## License
 

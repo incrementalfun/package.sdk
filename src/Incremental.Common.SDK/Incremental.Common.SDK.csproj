@@ -4,7 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <Title>Incremental.Common.SDK</Title>
-        <Description>Resources for building internal SDKs.</Description>
+        <Description>Common resources for building internal SDKs.</Description>
         <Authors>Lucas Maximiliano Marino</Authors>
         <PackageProjectUrl>https://github.com/incrementalfun/package.sdk</PackageProjectUrl>
         <RepositoryUrl>https://github.com/incrementalfun/package.sdk</RepositoryUrl>
