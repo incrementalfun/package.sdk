@@ -27,7 +27,7 @@ namespace Incremental.Common.SDK
 
         public override string SanitizeName(string name)
         {
-            return $"{Assembly.GetEntryAssembly()?.GetName().Name}_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}_{base.SanitizeName(name)}";
+            return $"{Assembly.GetEntryAssembly()?.GetName().Name?.Replace('.', '_')}_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}_{base.SanitizeName(name)}";
         }
     }
 }
