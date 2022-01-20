@@ -1,33 +1,38 @@
 using System;
 using System.Reflection;
+using System.Text;
+using Incremental.Common.SDK.Options;
 using MassTransit.Definition;
 
-namespace Incremental.Common.SDK
+namespace Incremental.Common.SDK;
+
+internal class IncrementalEndpointNameFormatter
 {
-    internal class IncrementalEndpointNameFormatter : SnakeCaseEndpointNameFormatter
+    public static string PrefixBuilder(SdkOptions options)
     {
-        public IncrementalEndpointNameFormatter(bool includeNamespace) : base(includeNamespace)
+        var prefix = new StringBuilder();
+
+        if (options.Prefix is not null)
         {
+            prefix.Append(options.Prefix);
         }
 
-        public IncrementalEndpointNameFormatter(string prefix, bool includeNamespace) : base(prefix, includeNamespace)
+        if (options.IncludeEnvironment)
         {
+            prefix.Append('_');
+            prefix.Append(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown");
         }
 
-        public IncrementalEndpointNameFormatter(char separator, string prefix, bool includeNamespace) : base(separator, prefix,
-            includeNamespace)
-        {
-        }
+        return prefix.ToString();
+    }
 
-        protected IncrementalEndpointNameFormatter()
-        {
-        }
-
-        public new static IncrementalEndpointNameFormatter Instance() => new();
-
-        public override string SanitizeName(string name)
-        {
-            return $"{Assembly.GetEntryAssembly()?.GetName().Name?.Replace('.', '_')}_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}_{base.SanitizeName(name)}";
-        }
+    public static string QueueNameForEntryAssembly(SdkOptions options)
+    {
+        return $"{PrefixBuilder(options)}_{Assembly.GetEntryAssembly()?.GetName().Name?.Replace('.', '_') ?? "Unknown"}";
+    }
+        
+    public static SnakeCaseEndpointNameFormatter Instance(SdkOptions options)
+    {
+        return new SnakeCaseEndpointNameFormatter(PrefixBuilder(options), options.IncludeNamespace);
     }
 }

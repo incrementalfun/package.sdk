@@ -6,66 +6,68 @@ using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Incremental.Common.SDK
+namespace Incremental.Common.SDK;
+
+/// <summary>
+/// Extensions to <see cref="IServiceCollection"/> to configure SDKs.
+/// </summary>
+public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Extensions to <see cref="IServiceCollection"/> to configure SDKs.
+    /// Configures an SDK in an application.
+    /// Don't call this if you don't really know what you are doing.
     /// </summary>
-    public static class ServiceCollectionExtensions
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="busConfiguration"></param>
+    /// <returns><see cref="IServiceCollection"/></returns>
+    public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration)
     {
-        /// <summary>
-        /// Configures an SDK in an application.
-        /// Don't call this if you don't really know what you are doing.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <param name="busConfiguration"></param>
-        /// <returns><see cref="IServiceCollection"/></returns>
-        public static IServiceCollection AddSdk(this IServiceCollection services, IConfiguration configuration, Action<IServiceCollectionBusConfigurator> busConfiguration)
-        {
-            services.AddMessaging();
+        services.AddMessaging();
 
-            services.AddMassTransit(configurator =>
+        services.ConfigureSdkOptions<SdkOptions>(configuration, SdkOptions.Sdk);
+
+        var options = GetSdkOptions(configuration);
+        
+        services.AddMassTransit(configurator =>
+        {
+            busConfiguration.Invoke(configurator);
+
+            configurator.SetEndpointNameFormatter(IncrementalEndpointNameFormatter.Instance(options));
+                
+            configurator.UsingAmazonSqs((ctx, cfg) =>
             {
-                configurator.SetEndpointNameFormatter(IncrementalEndpointNameFormatter.Instance());
-                
-                configurator.UsingAmazonSqs((ctx, cfg) => 
+                cfg.Host("eu-west-1", host =>
                 {
-                    cfg.Host("eu-west-1", host =>
-                    {
-                        host.AccessKey(configuration["AWS_ACCESS_KEY"]);
-                        host.SecretKey(configuration["AWS_SECRET_KEY"]);
+                    host.AccessKey(configuration["AWS_ACCESS_KEY"]);
+                    host.SecretKey(configuration["AWS_SECRET_KEY"]);
 
-                        var scope = configuration["SDK_SCOPE"] != null 
-                            ? configuration["SDK_SCOPE"] 
-                            : "Incremental";
-                        
-                        host.Scope($"${scope}_{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Unknown"}");
-                        host.EnableScopedTopics();
-                    });
-                    
-                    cfg.ConfigureEndpoints(ctx);
+                    host.Scope(IncrementalEndpointNameFormatter.PrefixBuilder(options), true);
+                    host.EnableScopedTopics();
                 });
-                
-                busConfiguration.Invoke(configurator);
+
+                cfg.ReceiveEndpoint(IncrementalEndpointNameFormatter.QueueNameForEntryAssembly(options), endpointCfg => 
+                {
+                    endpointCfg.ConfigureConsumers(ctx); 
+                });
             });
+        });
 
-            services.AddGenericRequestClient();
+        services.AddGenericRequestClient();
             
-            return services;
-        }
+        return services;
+    }
 
-        /// <summary>
-        ///     Helper method to configure SDK options.
-        /// </summary>
-        /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <param name="section"></param>
-        /// <typeparam name="TOptions"></typeparam>
-        /// <returns></returns>
-        public static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
-        {
-            return services.Configure<TOptions>(configuration.GetSection(SdkOptions.Sdk).GetSection(section));
-        }
+    private static SdkOptions GetSdkOptions(IConfiguration configuration)
+    {
+        var options = new SdkOptions();
+        configuration.GetSection(SdkOptions.Sdk).Bind(options);
+        
+        return options;
+    }
+
+    private static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
+    {
+        return services.Configure<TOptions>(configuration.GetSection(SdkOptions.Sdk).GetSection(section));
     }
 }
