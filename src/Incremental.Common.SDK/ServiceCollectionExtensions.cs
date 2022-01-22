@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddMessaging();
 
-        services.ConfigureSdkOptions<SdkOptions>(configuration, SdkOptions.Sdk);
+        services.Configure<SdkOptions>(configuration.GetSection(SdkOptions.Sdk));
 
         var options = GetSdkOptions(configuration);
         
@@ -66,7 +66,17 @@ public static class ServiceCollectionExtensions
         return options;
     }
 
-    private static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
+    /// <summary>
+    /// Configures options described in the SDK configuration namespace.
+    /// Should not be called directly in any api.
+    /// Used by individual SDKs.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="section"></param>
+    /// <typeparam name="TOptions"></typeparam>
+    /// <returns></returns>
+    public static IServiceCollection ConfigureSdkOptions<TOptions>(this IServiceCollection services, IConfiguration configuration, string section) where TOptions : SdkOptions
     {
         return services.Configure<TOptions>(configuration.GetSection(SdkOptions.Sdk).GetSection(section));
     }
